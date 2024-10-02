@@ -85,25 +85,25 @@ fig = px.bar(df_melted, x='repositories', y='Value', color='Metric',
 st.plotly_chart(fig)
 
 
-csv_file_repo = "repository_data.csv"
+csv_file_repo = "github_dataset.csv"
 df = pd.read_csv(csv_file_repo, skip_blank_lines=True)
 
-# print(df['languages_used'].head())  # Inspect the first few rows
+# Print the first few rows for inspection
+# print(df['languages_used'].head())
 
-# Use ast.literal_eval for safer evaluation of string representations of lists
-
-
-def safe_eval(x):
-    try:
-        return ast.literal_eval(x)
-    except (ValueError, SyntaxError):
-        return []  # Return an empty list if there's an error
+# Function to split comma-separated languages
 
 
-df['languages_used'] = df['languages_used'].apply(safe_eval)
+def split_languages(x):
+    # Split the string by commas and strip whitespace
+    return [lang.strip() for lang in x.split(',')] if isinstance(x, str) else []
+
+
+# Apply the function to the 'languages_used' column
+df['language'] = df['language'].apply(split_languages)
 
 # Flatten the list of languages from all repositories
-all_languages = [lang for sublist in df['languages_used'] for lang in sublist]
+all_languages = [lang for sublist in df['language'] for lang in sublist]
 
 # Count occurrences of each language using Counter
 language_counts = Counter(all_languages)
@@ -112,15 +112,9 @@ language_counts = Counter(all_languages)
 language_count_df = pd.DataFrame(
     language_counts.items(), columns=['language', 'count'])
 
-# # Example DataFrame with languages and their corresponding usage in the repository
-# data = {
-#     'language': ['Python', 'JavaScript', 'HTML', 'CSS', 'Other'],
-#     'usage': [50, 30, 10, 5, 5]  # Replace with actual usage data
-# }
-
-# df = pd.DataFrame(data)
-
 # Plotting the pie chart for languages used in the repository
 fig = px.pie(language_count_df, values='count', names='language',
              title='Language Distribution in the Repository')
+
+# Display the plot in Streamlit
 st.plotly_chart(fig)
