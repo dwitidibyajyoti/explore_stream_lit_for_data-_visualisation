@@ -112,9 +112,6 @@ language_counts = Counter(all_languages)
 language_count_df = pd.DataFrame(
     language_counts.items(), columns=['language', 'count'])
 
-# Display the DataFrame
-print(language_count_df)
-
 # # Example DataFrame with languages and their corresponding usage in the repository
 # data = {
 #     'language': ['Python', 'JavaScript', 'HTML', 'CSS', 'Other'],
